@@ -1,4 +1,4 @@
 interface:
-  display_name: "SSCv2 Theme Development"
-  short_description: "Edit Firmhouse SSCv2 templates"
-  default_prompt: "Use $self-service-center-theme-dev to inspect or update a Firmhouse Self Service Center template for this merchant workspace."
+  display_name: "Customer Portal v2 Theme Development"
+  short_description: "Preview and publish Firmhouse Customer Portal v2 templates"
+  default_prompt: "Use $self-service-center-theme-dev to inspect, edit, save a preview version, or publish an approved Firmhouse Customer Portal v2 template for this merchant workspace."

@@ -45,7 +45,7 @@ def post_graphql(endpoint: str, token: str, query: str, variables: dict) -> dict
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Fetch Firmhouse Self Service Center templates through GraphQL.")
+    parser = argparse.ArgumentParser(description="Fetch Firmhouse Customer Portal v2 templates through GraphQL.")
     parser.add_argument("--template", help="Template file name, e.g. dashboard.liquid")
     parser.add_argument(
         "--write-to-dir",

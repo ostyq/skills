@@ -1,4 +1,4 @@
-# Available SSCv2 Templates
+# Available Customer Portal v2 Templates
 
 Supported template file names:
 1. `dashboard.liquid`
@@ -8,6 +8,6 @@ Supported template file names:
 5. `shared_head.liquid`
 
 Notes:
-- Only these file names can be updated via `updateSelfServiceCenterTemplate`.
-- Template body is validated with strict Liquid parsing and the registered SSC tag set on save.
-- CSS is regenerated after each template update.
+- Only these file names can be saved as preview versions or published.
+- Template body is validated with strict Liquid parsing and the registered Customer Portal tag set on save.
+- CSS is regenerated after each saved or published template version.

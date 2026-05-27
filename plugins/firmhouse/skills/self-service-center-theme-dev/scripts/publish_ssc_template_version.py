@@ -5,8 +5,6 @@ import os
 import sys
 import urllib.error
 import urllib.request
-from pathlib import Path
-from typing import Optional
 
 from env_utils import load_dotenv
 
@@ -46,11 +44,10 @@ def post_graphql(endpoint: str, token: str, query: str, variables: dict) -> dict
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Save a Firmhouse Customer Portal v2 template preview version through GraphQL."
+        description="Publish an existing Firmhouse Customer Portal v2 template version through GraphQL."
     )
     parser.add_argument("--template", required=True, help="Template file name, e.g. dashboard.liquid")
-    parser.add_argument("--body-file", required=True, help="Path to the full liquid template body")
-    parser.add_argument("--title", help="Optional title for the saved preview version")
+    parser.add_argument("--version-number", required=True, type=int, help="Existing saved version number to publish")
     return parser.parse_args()
 
 
@@ -69,23 +66,16 @@ def main() -> int:
         print("Missing GraphQL endpoint.", file=sys.stderr)
         return 1
 
-    body_file = Path(args.body_file).expanduser()
-    if not body_file.is_file():
-        print(f"Body file not found: {body_file}", file=sys.stderr)
-        return 1
-
-    template_body = body_file.read_text(encoding="utf-8")
     mutation = (
-        "mutation SaveSelfServiceCenterTemplateVersion($templateFileName: String!, $body: String!, $title: String) { "
-        "saveSelfServiceCenterTemplateVersion(input: { templateFileName: $templateFileName, body: $body, title: $title }) { "
+        "mutation PublishSelfServiceCenterTemplateVersion($templateFileName: String!, $versionNumber: Int!) { "
+        "publishSelfServiceCenterTemplateVersion(input: { templateFileName: $templateFileName, versionNumber: $versionNumber }) { "
         "errors { attribute message } "
         "selfServiceCenterTemplateVersion { id versionNumber title published createdAt } "
         "} }"
     )
     variables = {
         "templateFileName": args.template,
-        "body": template_body,
-        "title": args.title,
+        "versionNumber": args.version_number,
     }
 
     try:
@@ -97,14 +87,14 @@ def main() -> int:
     print(json.dumps(response, indent=2))
 
     top_level_errors = response.get("errors") or []
-    mutation_payload = ((response.get("data") or {}).get("saveSelfServiceCenterTemplateVersion") or {})
+    mutation_payload = ((response.get("data") or {}).get("publishSelfServiceCenterTemplateVersion") or {})
     validation_errors = mutation_payload.get("errors") or []
 
     if top_level_errors:
-        print("GraphQL returned top-level errors.", file=sys.stderr)
+        print("GraphQL returned top-level errors. Re-query template state before retrying.", file=sys.stderr)
         return 2
     if validation_errors:
-        print("Template validation errors were returned.", file=sys.stderr)
+        print("Template publish errors were returned.", file=sys.stderr)
         return 3
 
     return 0
